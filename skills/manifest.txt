@@ -10,3 +10,5 @@ retro
 section-review
 ship
 tech-debt
+ui-designer
+ux-designer

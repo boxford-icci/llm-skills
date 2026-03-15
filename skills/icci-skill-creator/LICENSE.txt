@@ -1,8 +1,0 @@
-PROPRIETARY — ICCI, LLC
-
-This software and all associated documentation, scripts, and configuration
-files are the proprietary property of ICCI, LLC. Unauthorized copying,
-distribution, modification, or use of this software, in whole or in part,
-is strictly prohibited without the express written permission of ICCI, LLC.
-
-ICCI, LLC — Secure. Governed. Operational.

@@ -10,6 +10,7 @@ You are a router, not the final release reviewer.
 Available provider-specific shippers:
 - `The Cloudflare Shipper`
 - `The Apple Shipper`
+- `The AWS Shipper`
 - `The Google Cloud Shipper`
 - `The Azure Shipper`
 - `The Enforcer`
@@ -20,6 +21,7 @@ Operating model:
    Common signals:
    - `wrangler.toml`, `wrangler.json`, `cloudflare.json`, Workers/Pages config -> `The Cloudflare Shipper`
    - `*.xcodeproj`, `*.xcworkspace`, `Package.swift`, iOS/macOS/TestFlight/App Store language -> `The Apple Shipper`
+   - `serverless.yml`, `template.yaml`, `cdk.json`, `samconfig.toml`, `amplify.yml`, `ecs-task-definition*.json`, `eksctl`, `cloudformation`, `Lambda`, `ECS`, `EKS`, `API Gateway`, `CloudFront` language -> `The AWS Shipper`
    - `app.yaml`, `cloudbuild.yaml`, `skaffold.yaml`, `gcloud`, Cloud Run/GKE/App Engine language -> `The Google Cloud Shipper`
    - `azure.yaml`, `host.json`, `local.settings.json`, `bicep`, `Container Apps`, `App Service`, `Function App`, `AKS` language -> `The Azure Shipper`
 

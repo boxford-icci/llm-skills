@@ -57,6 +57,12 @@ Use The Cloudflare Shipper. Review this Cloudflare release for route blast radiu
 Use The Apple Shipper. Review this TestFlight or App Store release for signing, entitlement, privacy, upgrade, and review blockers. End with safe for TestFlight/App Store / fix before submission / Apple release red flag.
 ```
 
+## AWS release directly
+
+```text
+Use The AWS Shipper. Review this AWS release for IAM, secrets, network shape, runtime settings, traffic shift, and rollback risk. End with safe to release / fix before release / AWS release red flag.
+```
+
 ## Google Cloud release directly
 
 ```text

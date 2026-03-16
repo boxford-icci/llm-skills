@@ -2,7 +2,7 @@
 
 Public home for Blake Oxford's open-source workflow and review skills.
 
-Current bundle version: `0.1.0`
+Current bundle version: `0.3.0`
 
 This repo now also includes **repository-level custom agent scaffolds** in `.github/agents/` that bundle the skills into practical teams for Copilot CLI and other Copilot agent surfaces.
 
@@ -13,6 +13,7 @@ It also now includes **Copilot routing instructions** and **phase prompt templat
 - `_house-style`
 - `api-review`
 - `apple-ship`
+- `aws-ship`
 - `azure-ship`
 - `cloudflare-ship`
 - `dep-audit`
@@ -55,6 +56,7 @@ The `.github/agents/` directory contains opinionated agent profiles that bundle 
 - `product-design-review.agent.md` — orchestration layer for `ux-designer` + `ui-designer`
 - `cloudflare-ship.agent.md` — Cloudflare-specific ship and rollout specialist
 - `apple-ship.agent.md` — Apple/TestFlight/App Store release specialist
+- `aws-ship.agent.md` — AWS-specific release specialist
 - `google-cloud-ship.agent.md` — Google Cloud-specific release specialist
 - `azure-ship.agent.md` — Azure-specific release specialist
 - `platform-administrator.agent.md` — detects likely platform and routes to the right provider-specific shipper
@@ -79,6 +81,7 @@ With these additions, the repo is no longer only review-oriented. It now has a f
 - protect contracts with `The Contract Tester`
 - ship on Cloudflare with `The Cloudflare Shipper`
 - ship on Apple platforms with `The Apple Shipper`
+- ship on AWS with `The AWS Shipper`
 - ship on Google Cloud with `The Google Cloud Shipper`
 - ship on Azure with `The Azure Shipper`
 - detect the right platform shipper with `The Platform Administrator`
@@ -163,6 +166,7 @@ Use this as the quick "who should I call?" reference.
 | Final ship gate | `The Enforcer` | `The Builder` + `The Enforcer` |
 | Cloudflare release or edge rollout | `The Cloudflare Shipper` | `The Cloudflare Shipper` + `The Enforcer` |
 | Apple/TestFlight/App Store release | `The Apple Shipper` | `The Apple Shipper` + `The Enforcer` |
+| AWS release or rollout | `The AWS Shipper` | `The AWS Shipper` + `The Enforcer` |
 | Google Cloud release or rollout | `The Google Cloud Shipper` | `The Google Cloud Shipper` + `The Enforcer` |
 | Azure release or slot/revision rollout | `The Azure Shipper` | `The Azure Shipper` + `The Enforcer` |
 | Unknown platform release | `The Platform Administrator` | `The Platform Administrator` + relevant shipper + `The Enforcer` |
@@ -362,6 +366,7 @@ llm-skills/
 │   ├── agents/
 │   │   ├── accessibility.agent.md
 │   │   ├── apple-ship.agent.md
+│   │   ├── aws-ship.agent.md
 │   │   ├── architect.agent.md
 │   │   ├── azure-ship.agent.md
 │   │   ├── breaker.agent.md
@@ -427,6 +432,7 @@ llm-skills/
     ├── _house-style/
     ├── api-review/
     ├── apple-ship/
+    ├── aws-ship/
     ├── azure-ship/
     ├── cloudflare-ship/
     ├── dep-audit/

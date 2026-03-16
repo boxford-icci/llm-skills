@@ -1,6 +1,7 @@
 _house-style
 api-review
 apple-ship
+aws-ship
 azure-ship
 cloudflare-ship
 dep-audit

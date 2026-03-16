@@ -36,6 +36,7 @@ Available specialist agents:
 - `The Investigator`
 - `The Cloudflare Shipper`
 - `The Apple Shipper`
+- `The AWS Shipper`
 - `The Google Cloud Shipper`
 - `The Azure Shipper`
 - `The Platform Administrator`
@@ -61,6 +62,7 @@ Decision rules:
     - Incident, retro, or debt analysis -> `The Investigator`
     - Cloudflare release, routes, bindings, Workers, or Pages deploy -> `The Cloudflare Shipper`
     - Apple platform release, TestFlight, or App Store submission -> `The Apple Shipper`
+    - AWS release, Lambda/ECS/EKS/API Gateway/CloudFront rollout, or IAM/network config risk -> `The AWS Shipper`
     - Google Cloud release, Cloud Run/GKE rollout, or GCP config risk -> `The Google Cloud Shipper`
     - Azure release, slots, managed identity, or Key Vault rollout risk -> `The Azure Shipper`
     - Platform-specific shipping where the provider is unclear -> `The Platform Administrator`
@@ -106,6 +108,7 @@ Decision rules:
     - Post-incident analysis -> `The Investigator` + `The Architect`
     - Cloudflare release -> `The Cloudflare Shipper` + `The Enforcer`
     - Apple release -> `The Apple Shipper` + `The Enforcer`
+    - AWS release -> `The AWS Shipper` + `The Enforcer`
     - Google Cloud release -> `The Google Cloud Shipper` + `The Enforcer`
     - Azure release -> `The Azure Shipper` + `The Enforcer`
     - Platform release with unclear provider -> `The Platform Administrator` + `The Enforcer`

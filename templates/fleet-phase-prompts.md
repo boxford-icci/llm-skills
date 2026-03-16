@@ -161,7 +161,15 @@ Use when shipping an iOS or macOS build through TestFlight or the App Store.
 Run an Apple release review. Use The Apple Shipper to audit signing, entitlements, privacy disclosures, upgrade risk, and App Review-sensitive behavior. Finish with The Enforcer if you want one final ship gate.
 ```
 
-## 21. Google Cloud release phase
+## 21. AWS release phase
+
+Use when shipping to Lambda, ECS, EKS, API Gateway, CloudFront, App Runner, or other AWS runtime surfaces.
+
+```text
+Run an AWS release review. Use The AWS Shipper to audit IAM, secrets, region/account assumptions, network shape, startup behavior, scaling settings, and rollback realism. Finish with The Enforcer if this is the final release gate.
+```
+
+## 22. Google Cloud release phase
 
 Use when shipping to Cloud Run, GKE, App Engine, or other GCP runtime surfaces.
 
@@ -169,7 +177,7 @@ Use when shipping to Cloud Run, GKE, App Engine, or other GCP runtime surfaces.
 Run a Google Cloud release review. Use The Google Cloud Shipper to audit IAM, service accounts, secret access, startup behavior, autoscaling assumptions, and rollback realism. Finish with The Enforcer if this is the final release gate.
 ```
 
-## 22. Azure release phase
+## 23. Azure release phase
 
 Use when shipping to App Service, Functions, Container Apps, AKS, slots, or other Azure runtime surfaces.
 
@@ -177,7 +185,7 @@ Use when shipping to App Service, Functions, Container Apps, AKS, slots, or othe
 Run an Azure release review. Use The Azure Shipper to audit managed identity, Key Vault access, app settings, slot or revision behavior, ingress, and rollback realism. Finish with The Enforcer if this is the final release gate.
 ```
 
-## 23. Platform detection phase
+## 24. Platform detection phase
 
 Use when the repo is shipping somewhere, but you want the system to choose the right provider-specific shipper first.
 

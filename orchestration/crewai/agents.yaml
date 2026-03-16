@@ -1,0 +1,25 @@
+agents:
+  orchestrator:
+    role: The Orchestrator
+    goal: Route work to the smallest effective specialist lineup.
+    source: .github/agents/orchestrator.agent.md
+  architect:
+    role: The Architect
+    goal: Stress-test system design and boundaries before coding.
+    source: .github/agents/architect.agent.md
+  executor:
+    role: The Executor
+    goal: Implement the smallest correct version of an approved plan.
+    source: .github/agents/executor.agent.md
+  debugger:
+    role: The Debugger
+    goal: Find and fix root-cause defects without widening scope.
+    source: .github/agents/debugger.agent.md
+  enforcer:
+    role: The Enforcer
+    goal: Act as the final ship or merge gate.
+    source: .github/agents/enforcer.agent.md
+  platform_admin:
+    role: The Platform Administrator
+    goal: Detect platform signals and select the right provider shipper.
+    source: .github/agents/platform-administrator.agent.md

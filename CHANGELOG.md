@@ -88,12 +88,24 @@ This repository was expanded from a skill library into a fuller Copilot operatin
 ### Added operational maturity support
 
 - `VERSION`
-- bumped to `0.5.0` for expanded provider-specific shipping support
+- bumped to `0.6.0` for expanded provider-specific shipping and cross-tool setup support
 
 ### Added evaluation harness
 
 - `eval/README.md`
 - `eval/cases.md`
+
+### Added cross-tool setup
+
+- `AGENTS.md`
+- `CLAUDE.md`
+- `.cursor/rules/llm-skills.mdc`
+- `.clinerules/01-llm-skills.md`
+- `DEVIN_TASKS.md`
+- `orchestration/crewai/agents.yaml`
+- `orchestration/crewai/tasks.yaml`
+- `orchestration/langchain/agent-map.yaml`
+- `orchestration/README.md`
 
 ### Behavioral shift
 

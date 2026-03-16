@@ -1,0 +1,36 @@
+roles:
+  orchestrator:
+    source: .github/agents/orchestrator.agent.md
+    handoffs_to:
+      - architect
+      - executor
+      - debugger
+      - enforcer
+      - platform_administrator
+  platform_administrator:
+    source: .github/agents/platform-administrator.agent.md
+    handoffs_to:
+      - cloudflare_shipper
+      - apple_shipper
+      - aws_shipper
+      - google_cloud_shipper
+      - azure_shipper
+      - supabase_shipper
+      - vercel_shipper
+      - enforcer
+  enforcer:
+    source: .github/agents/enforcer.agent.md
+    handoffs_to: []
+  architect:
+    source: .github/agents/architect.agent.md
+    handoffs_to:
+      - executor
+      - enforcer
+  executor:
+    source: .github/agents/executor.agent.md
+    handoffs_to:
+      - enforcer
+  debugger:
+    source: .github/agents/debugger.agent.md
+    handoffs_to:
+      - enforcer

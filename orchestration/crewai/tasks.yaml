@@ -1,0 +1,24 @@
+tasks:
+  route_change:
+    description: Decide whether work stays single-agent or needs a small specialist fleet.
+    primary_agent: orchestrator
+    outputs:
+      - selected_agents
+      - execution_order
+      - launch_prompts
+  implement_change:
+    description: Execute an approved plan with follow-up validation.
+    sequence:
+      - architect
+      - executor
+      - enforcer
+  investigate_bug:
+    description: Fix a real regression and then confirm honest coverage.
+    sequence:
+      - debugger
+      - enforcer
+  review_release_surface:
+    description: Choose the right provider-specific shipper before final release review.
+    sequence:
+      - platform_admin
+      - enforcer

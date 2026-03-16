@@ -1,0 +1,13 @@
+---
+description: Repo rules for the llm-skills specialist bench
+alwaysApply: true
+---
+
+Follow `AGENTS.md` as the shared repository contract.
+
+Additional Cursor guidance:
+- Treat this repo as a prompt and workflow system, not an app.
+- Keep edits small and composable.
+- If you add a new public specialist or shipping lane, update the mirrored docs surfaces, not just one file.
+- Favor targeted documentation and instruction updates over speculative code scaffolding.
+- Run the repo validation commands after substantive changes.

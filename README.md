@@ -2,7 +2,7 @@
 
 Public home for Blake Oxford's open-source workflow and review skills.
 
-Current bundle version: `0.5.0`
+Current bundle version: `0.6.0`
 
 This repo now also includes **repository-level custom agent scaffolds** in `.github/agents/` that bundle the skills into practical teams for Copilot CLI and other Copilot agent surfaces.
 
@@ -330,6 +330,20 @@ If you want copy-paste workflows or concrete golden response shapes instead of i
 - `guide/release-checklist.md` — what to verify before publishing or recommending an updated bundle
 - `guide/self-audit.md` — periodic health check for overlap, routing drift, and weak roles
 
+## Cross-tool compatibility
+
+This repository is now structured so the same bench can be used across several agentic coding tools with minimal rework:
+
+- `AGENTS.md` — shared repository contract for cross-tool agents
+- `CLAUDE.md` — Claude Code root instructions
+- `.cursor/rules/llm-skills.mdc` — Cursor project rules
+- `.clinerules/01-llm-skills.md` — Cline workspace rules
+- `DEVIN_TASKS.md` — Devin-oriented task framing and validation guide
+- `orchestration/crewai/` — CrewAI starter agent and task maps
+- `orchestration/langchain/agent-map.yaml` — LangChain/LangGraph starter role graph
+
+These files do not replace the source surfaces. The canonical bench still lives in `skills/`, `.github/agents/`, `codex/agents/`, and `claude/agents/`.
+
 ## Install for GitHub Copilot CLI
 
 ```bash
@@ -401,13 +415,28 @@ llm-skills/
 │   └── instructions/
 │       ├── agents.instructions.md
 │       └── skills.instructions.md
+├── .clinerules/
+│   └── 01-llm-skills.md
+├── .cursor/
+│   └── rules/
+│       └── llm-skills.mdc
+├── orchestration/
+│   ├── README.md
+│   ├── crewai/
+│   │   ├── agents.yaml
+│   │   └── tasks.yaml
+│   └── langchain/
+│       └── agent-map.yaml
 ├── scripts/
 │   ├── bootstrap-copilot.sh
 │   ├── install-copilot-agents.sh
 │   ├── install-copilot-skills.sh
 │   ├── verify-copilot-agents.sh
 │   └── verify-copilot-skills.sh
+├── AGENTS.md
 ├── CHANGELOG.md
+├── CLAUDE.md
+├── DEVIN_TASKS.md
 ├── VERSION
 ├── eval/
 │   ├── README.md

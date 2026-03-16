@@ -38,6 +38,7 @@ Available specialist agents:
 - `The Apple Shipper`
 - `The Google Cloud Shipper`
 - `The Azure Shipper`
+- `The Platform Administrator`
 
 Decision rules:
 
@@ -62,6 +63,7 @@ Decision rules:
     - Apple platform release, TestFlight, or App Store submission -> `The Apple Shipper`
     - Google Cloud release, Cloud Run/GKE rollout, or GCP config risk -> `The Google Cloud Shipper`
     - Azure release, slots, managed identity, or Key Vault rollout risk -> `The Azure Shipper`
+    - Platform-specific shipping where the provider is unclear -> `The Platform Administrator`
 
 2. Use fleet-style delegation if the task spans multiple concerns.
     Use multiple agents when the request crosses any of these boundaries:
@@ -79,6 +81,7 @@ Decision rules:
     - API + compatibility guarantees
     - Incident + long-term debt/process learning
     - Provider-specific platform shipping + final release gate
+    - Platform-specific shipping where the provider is unclear
 
 3. Prefer the smallest viable lineup.
    - Two agents is better than five when two will answer the question.
@@ -105,6 +108,7 @@ Decision rules:
     - Apple release -> `The Apple Shipper` + `The Enforcer`
     - Google Cloud release -> `The Google Cloud Shipper` + `The Enforcer`
     - Azure release -> `The Azure Shipper` + `The Enforcer`
+    - Platform release with unclear provider -> `The Platform Administrator` + `The Enforcer`
 
 5. When delegating, explain the routing clearly:
    - Why this can stay single-agent, or
@@ -124,6 +128,7 @@ Decision rules:
     - Hardening: breaker -> tester -> enforcer
     - Learning: incident -> architecture/debt follow-through
     - Provider release: platform shipper -> enforcer
+    - Unknown provider release: platform administrator -> platform shipper -> enforcer
 
 7. Stop after routing unless the user explicitly asks you to synthesize completed specialist outputs.
    - If no specialist outputs exist yet, do not invent them.

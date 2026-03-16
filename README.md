@@ -57,6 +57,7 @@ The `.github/agents/` directory contains opinionated agent profiles that bundle 
 - `apple-ship.agent.md` — Apple/TestFlight/App Store release specialist
 - `google-cloud-ship.agent.md` — Google Cloud-specific release specialist
 - `azure-ship.agent.md` — Azure-specific release specialist
+- `platform-administrator.agent.md` — detects likely platform and routes to the right provider-specific shipper
 
 Important nuance: skills are still selected by relevance. The custom agents do not hard-pin a skill in the Copilot runtime. Instead, their prompts tell Copilot which skills to lean on for that role.
 
@@ -80,6 +81,7 @@ With these additions, the repo is no longer only review-oriented. It now has a f
 - ship on Apple platforms with `The Apple Shipper`
 - ship on Google Cloud with `The Google Cloud Shipper`
 - ship on Azure with `The Azure Shipper`
+- detect the right platform shipper with `The Platform Administrator`
 - gate with `The Enforcer`
 
 ### Recommended `/fleet` pattern
@@ -93,6 +95,7 @@ For a new feature:
 - Security/performance/reliability/migration phase: `The Security Engineer`, `The Performance Engineer`, `The Reliability Engineer`, `The Migration Engineer`, `The Contract Tester` as needed
 - Pre-merge phase: `The Enforcer`, `The Builder`
 - Provider release phase: relevant platform shipper + `The Enforcer`
+- Unknown provider phase: `The Platform Administrator`, then relevant platform shipper + `The Enforcer`
 - Post-incident or periodic review: `The Investigator`
 
 ### Orchestrator-first usage
@@ -162,6 +165,7 @@ Use this as the quick "who should I call?" reference.
 | Apple/TestFlight/App Store release | `The Apple Shipper` | `The Apple Shipper` + `The Enforcer` |
 | Google Cloud release or rollout | `The Google Cloud Shipper` | `The Google Cloud Shipper` + `The Enforcer` |
 | Azure release or slot/revision rollout | `The Azure Shipper` | `The Azure Shipper` + `The Enforcer` |
+| Unknown platform release | `The Platform Administrator` | `The Platform Administrator` + relevant shipper + `The Enforcer` |
 | Incident / retro / debt learning | `The Investigator` | `The Investigator` + `The Architect` + `The Reliability Engineer` |
 
 ## Overlap rules
@@ -294,6 +298,7 @@ If you want copy-paste workflows or concrete golden response shapes instead of i
 - `recipes/incident-workflow.md` — outage, regression, and follow-through
 - `recipes/platform-change-workflow.md` — migrations, contracts, security, reliability, and ship gate
 - `recipes/direct-run-workflows.md` — fast-path prompts when you already know the right specialist
+- `The Platform Administrator` — fastest route when you know you are shipping but not which shipper should own the release
 - `examples/orchestrator-transcript.md` — example orchestrator prompt and response shape
 - `examples/fleet-review-transcript.md` — example specialist lineup and synthesis flow
 - `examples/executor-transcript.md` — example execution-scoping response shape
@@ -372,6 +377,7 @@ llm-skills/
 │   │   ├── migration.agent.md
 │   │   ├── orchestrator.agent.md
 │   │   ├── performance.agent.md
+│   │   ├── platform-administrator.agent.md
 │   │   ├── reliability.agent.md
 │   │   ├── product-design-review.agent.md
 │   │   ├── product-mind.agent.md

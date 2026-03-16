@@ -176,3 +176,11 @@ Use when shipping to App Service, Functions, Container Apps, AKS, slots, or othe
 ```text
 Run an Azure release review. Use The Azure Shipper to audit managed identity, Key Vault access, app settings, slot or revision behavior, ingress, and rollback realism. Finish with The Enforcer if this is the final release gate.
 ```
+
+## 23. Platform detection phase
+
+Use when the repo is shipping somewhere, but you want the system to choose the right provider-specific shipper first.
+
+```text
+Run a platform-detection pass for this release. Use The Platform Administrator to infer the likely platform from repo signals and release language, choose the right provider-specific shipper, and give me one launch-ready prompt. If this is close to production, tell me whether The Enforcer should run after that.
+```

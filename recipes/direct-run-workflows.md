@@ -68,3 +68,9 @@ Use The Google Cloud Shipper. Review this GCP release for IAM, secret access, st
 ```text
 Use The Azure Shipper. Review this Azure release for managed identity, Key Vault, slot or revision behavior, ingress, startup, and rollback risk. End with safe to release / fix before release / Azure release red flag.
 ```
+
+## Platform detection directly
+
+```text
+Use The Platform Administrator. Infer the likely release platform from this repo and release description, choose the right provider-specific shipper, and give me one launch-ready prompt. If this is close to production, tell me whether The Enforcer should run next.
+```

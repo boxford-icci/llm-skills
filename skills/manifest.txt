@@ -1,12 +1,15 @@
 _house-style
+a11y-audit
 api-review
 apple-ship
 aws-ship
 azure-ship
 cloudflare-ship
 dep-audit
+execute
 google-cloud-ship
 onboarding-audit
+parallel-review
 paranoid-review
 plan-eng-review
 plan-product-review
@@ -16,6 +19,9 @@ section-review
 ship
 supabase-ship
 tech-debt
+test-audit
+test-fix
+test-write
 ui-designer
 ux-designer
 vercel-ship

@@ -6,10 +6,17 @@
 |---|---|---|
 | `/plan-product-review` | Before deciding what to build | Is this the right thing? |
 | `/plan-eng-review` | After product direction is locked | Is the architecture sound? |
+| `/execute` | Time to write code | Build it, fix it, refactor it, delete it |
 | `/section-review` | Reviewing existing code/UI in depth | What's the real quality? |
 | `/paranoid-review` | Before merging a branch | Will this survive production? |
 | `/ship` | Branch is ready, land it | Pass the gate or fix it |
 | `/api-review` | Reviewing API design | Use it, then break it |
+| `/ux-designer` | Evaluating user experience | Can a real user do their job? |
+| `/ui-designer` | Evaluating visual design | Does it look right and feel consistent? |
+| `/a11y-audit` | Accessibility compliance | Can everyone use this? |
+| `/test-audit` | Evaluating test suite quality | Is our coverage real or fake? |
+| `/test-write` | Writing missing tests | Cover the paths that matter |
+| `/test-fix` | Fixing broken or flaky tests | Is the test wrong or the code wrong? |
 | `/dep-audit` | Periodic or before adding deps | Does every dep earn its place? |
 | `/tech-debt` | Sprint planning, quarterly review | What's the real cost of carrying this? |
 | `/onboarding-audit` | New project setup, periodic check | Can a stranger get this running? |
@@ -32,15 +39,20 @@ Idea
  │                        Verdict: Ready / Needs work / Wrong approach
  │
  ▼
-[implement]
+/execute build ────────── Write the code
+ │                        Reads before writing. Tests what it ships.
  │
  ▼
 /paranoid-review ──────── Will this survive production?
  │                        Verdict: Ship / Fix then ship / Rethink
  │
+ ├── Fix then ship? ──▶ /execute fix ──▶ (loop back to /paranoid-review)
+ │
  ▼
 /ship ─────────────────── Pre-flight gate
  │                        Verdict: PASS / BLOCK
+ │
+ ├── BLOCK? ──────────▶ /execute fix ──▶ (loop back to /ship)
  │
  ▼
 Merged
@@ -69,6 +81,32 @@ Use these when you need focused analysis on a specific area.
 | "We keep having bugs in X" | `/section-review [X]` then `/tech-debt [X]` |
 | "New hire couldn't get set up" | `/onboarding-audit` |
 
+## Parallel review
+
+`/parallel-review` orchestrates multiple skills as parallel subagents and synthesizes the results.
+
+| Mode | Skills spawned | When |
+|---|---|---|
+| `pre-merge` | `/paranoid-review` + `/dep-audit` + `/ship` | Before merging any PR |
+| `deep-audit` | `/section-review` + `/tech-debt` + `/api-review` | Quarterly or pre-launch |
+| `health` | `/dep-audit` + `/tech-debt` + `/onboarding-audit` | Monthly check-in |
+| `post-incident` | `/postmortem` + `/retro` + `/paranoid-review` | After any outage |
+| `test` | `/test-audit` + `/test-write` + `/test-fix` | Test suite overhaul |
+| `design` | `/ux-designer` + `/ui-designer` + `/a11y-audit` | Full frontend quality audit |
+
+Usage:
+
+```
+/parallel-review pre-merge feature/payments
+/parallel-review deep-audit src/
+/parallel-review health .
+/parallel-review post-incident #incident-47
+/parallel-review test src/
+/parallel-review design src/components/
+```
+
+The coordinator deduplicates findings across reviewers, resolves severity conflicts (takes the higher), surfaces contradictions, and produces a single prioritized report with a combined verdict.
+
 ## Combining skills
 
 Skills are more powerful in sequence:
@@ -78,6 +116,12 @@ Skills are more powerful in sequence:
 - **Dep audit → Paranoid review** — audit deps, then review the code that uses them
 - **Postmortem → Retro** — investigate the incident, then zoom out to the week
 - **Onboarding audit → Tech debt** — friction points often reveal structural debt
+- **Test audit → Test write → Test fix** — audit quality, fill gaps, fix what's broken
+- **Paranoid review → Test write** — review finds bugs, tests prevent recurrence
+- **Execute build → Parallel review test** — build the feature, then verify the tests are real
+- **UX review → UI review → A11y audit** — flows, then visuals, then compliance
+- **Parallel review design → Execute fix** — find all frontend issues, then fix them
+- **A11y audit → Execute fix → Ship** — accessibility compliance before shipping
 
 ## When NOT to use a skill
 

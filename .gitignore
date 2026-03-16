@@ -13,3 +13,15 @@ credentials/*.txt
 !credentials/README.md
 api_key*
 tokens.json
+
+# Third-party skills (symlinked from ~/.agents/skills/)
+skills/clerk
+skills/clerk-backend-api
+skills/clerk-custom-ui
+skills/clerk-nextjs-patterns
+skills/clerk-orgs
+skills/clerk-setup
+skills/clerk-swift
+skills/clerk-testing
+skills/clerk-webhooks
+skills/find-skills

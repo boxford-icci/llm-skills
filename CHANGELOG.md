@@ -1,6 +1,44 @@
 # Changelog
 
-## Current build-out
+## 0.7.0 — OpenClaw, Claude Code, and Codex integration
+
+### Added OpenClaw support
+
+- `openclaw/skills/` — 26 agent-as-skills (SKILL.md wrappers for each specialist role)
+- `scripts/install-openclaw.sh` — installs raw skills via extraDirs + agent skills to `~/.openclaw/skills/`
+- OpenClaw loads skills from the repo via `skills.load.extraDirs` (live watch, no copy)
+- ACP bridge documentation for spawning Claude/Codex sessions from OpenClaw
+
+### Added Claude Code best-practice setup
+
+- `claude/agents/` — all 26 agents updated with `skills:` frontmatter for auto-preloading
+- `claude/agents/orchestrator.md` — references actual `subagent_type` names instead of prose
+- `claude/rules/house-style.md` — auto-loaded rule (replaces explicit Read instructions)
+- `scripts/install-claude.sh` — symlinks skills, copies agents+rules to `~/.claude/`
+
+### Added Codex support
+
+- `scripts/install-codex.sh` — symlinks skills + agent-as-skills to `~/.codex/skills/`
+
+### Updated
+
+- `INSTALL.md` — setup guides for all four platforms (Copilot, Claude Code, OpenClaw, Codex)
+- `README.md` — cross-platform install section and updated layout
+- `VERSION` bumped to `0.7.0`
+
+### Architecture note
+
+All platforms share the same skill bench from `skills/`. Platform-specific wiring:
+- **Copilot**: `.github/agents/` (agent definitions) + `~/.copilot/skills/` (rsync copy)
+- **Claude Code**: `claude/agents/` (with `skills:` frontmatter) + `~/.claude/skills/` (symlinks)
+- **OpenClaw**: `openclaw/skills/` (agent-as-skills) + `extraDirs` (live reference)
+- **Codex**: `~/.codex/skills/` (symlinks to both raw skills and agent-as-skills)
+
+---
+
+## 0.6.0
+
+### Previous build-out
 
 This repository was expanded from a skill library into a fuller Copilot operating system with specialist agents, routing guidance, examples, and evaluation support.
 

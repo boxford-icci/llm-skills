@@ -2,11 +2,16 @@
 
 Public home for Blake Oxford's open-source workflow and review skills.
 
-Current bundle version: `0.6.0`
+Current bundle version: `0.7.0`
 
-This repo now also includes **repository-level custom agent scaffolds** in `.github/agents/` that bundle the skills into practical teams for Copilot CLI and other Copilot agent surfaces.
+A cross-platform specialist bench for AI coding agents. Same skills, same routing, four platforms:
 
-It also now includes **Copilot routing instructions** and **phase prompt templates** so the repo itself nudges Copilot toward better specialist selection, better fleet usage, and a clearer path from planning to execution and testing.
+- **GitHub Copilot** — `.github/agents/` + `~/.copilot/skills/`
+- **Claude Code** — `claude/agents/` (with `skills:` frontmatter) + `~/.claude/skills/`
+- **OpenClaw** — `openclaw/skills/` (agent-as-skills) + `extraDirs` (live reference)
+- **Codex** — `~/.codex/skills/` (symlinks)
+
+One orchestrator routes to specialists. Specialists compose skills. Skills are the shared vocabulary.
 
 ## Included skills
 
@@ -342,42 +347,40 @@ This repository is now structured so the same bench can be used across several a
 - `orchestration/crewai/` — CrewAI starter agent and task maps
 - `orchestration/langchain/agent-map.yaml` — LangChain/LangGraph starter role graph
 
-These files do not replace the source surfaces. The canonical bench still lives in `skills/`, `.github/agents/`, `codex/agents/`, and `claude/agents/`.
+These files do not replace the source surfaces. The canonical bench still lives in `skills/`, `.github/agents/`, `claude/agents/`, and `openclaw/skills/`.
 
-## Install for GitHub Copilot CLI
+## Install
 
 ```bash
 git clone https://github.com/blakeox/llm-skills.git ~/Documents/GitHub/llm-skills
 cd ~/Documents/GitHub/llm-skills
-./scripts/bootstrap-copilot.sh
 ```
 
-The bootstrap script prints the bundle version from `VERSION` so installs are easier to identify.
-
-If you prefer the explicit steps, you can still run the install and verify scripts individually:
+Then run the installer for your platform:
 
 ```bash
-./scripts/install-copilot-agents.sh
-./scripts/verify-copilot-agents.sh
-./scripts/install-copilot-skills.sh
-./scripts/verify-copilot-skills.sh
+# GitHub Copilot CLI
+./scripts/bootstrap-copilot.sh
+
+# Claude Code
+./scripts/install-claude.sh
+
+# OpenClaw
+./scripts/install-openclaw.sh
+
+# Codex
+./scripts/install-codex.sh
 ```
 
-The canonical published set lives in `skills/manifest.txt`. The install script syncs each listed directory with `rsync -a --delete` so stale local files do not linger.
-
-Start a new Copilot session after installing or updating the skills so they get picked up.
+See [INSTALL.md](INSTALL.md) for detailed setup including OpenClaw ACP bridge configuration.
 
 ## Update later
 
 ```bash
 cd ~/Documents/GitHub/llm-skills
 git pull
-./scripts/bootstrap-copilot.sh
+./scripts/install-claude.sh   # or whichever platform
 ```
-
-The bootstrap script prints the bundle version from `VERSION` so installs are easier to identify.
-
-Or rerun the individual install and verify scripts if you want a more explicit update flow.
 
 ## Repository layout
 
@@ -415,6 +418,16 @@ llm-skills/
 │   └── instructions/
 │       ├── agents.instructions.md
 │       └── skills.instructions.md
+├── claude/
+│   ├── agents/                  # Claude Code agents (with skills: frontmatter)
+│   └── rules/
+│       └── house-style.md       # Auto-loaded rule for Claude Code
+├── openclaw/
+│   └── skills/                  # OpenClaw agent-as-skills (SKILL.md wrappers)
+│       ├── orchestrator/
+│       ├── enforcer/
+│       ├── debugger/
+│       └── ...                  # 26 total
 ├── .clinerules/
 │   └── 01-llm-skills.md
 ├── .cursor/
@@ -431,6 +444,9 @@ llm-skills/
 │   ├── bootstrap-copilot.sh
 │   ├── install-copilot-agents.sh
 │   ├── install-copilot-skills.sh
+│   ├── install-claude.sh
+│   ├── install-openclaw.sh
+│   ├── install-codex.sh
 │   ├── verify-copilot-agents.sh
 │   └── verify-copilot-skills.sh
 ├── AGENTS.md

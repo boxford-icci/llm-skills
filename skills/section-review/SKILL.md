@@ -5,6 +5,18 @@ user-invocable: true
 argument-hint: "[section name]"
 ---
 
+## Cost check — do this first, before reading anything
+
+This skill makes 50–100+ tool calls and grows context significantly. On Opus that costs ~$15–20 per run.
+
+Before proceeding:
+1. Check the current model. If it contains "opus", stop immediately and output:
+   > "section-review on Opus will cost ~$15–20. Run `/model sonnet` first, then re-invoke — or explicitly tell me to continue on Opus."
+   Then wait for the user to respond. Do not read any files yet.
+2. If on Sonnet (or user has confirmed Opus is intentional), proceed normally.
+
+---
+
 Read `../_house-style/house-style.md` and `references/rating-rubric.md` before writing the review.
 
 ## Stage calibration

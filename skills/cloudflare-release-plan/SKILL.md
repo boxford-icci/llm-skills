@@ -153,8 +153,14 @@ flag style.
 
 Unattended, on a schedule. Non-interactive, so:
 
-1. `node "$D" new` — if `**Nothing new.**`, bump `Last swept:`, commit, exit.
-2. Otherwise triage, update the plan, and open a **plan-only PR** — no code changes.
+1. `node "$D" new` — if `**Nothing new.**`, **exit 0 without committing anything.**
+   Do **not** open a PR just to bump `Last swept:`. At hourly cadence that is a
+   date-only PR every hour. Leaving the date stale is safe: `new` re-scans a
+   slightly wider window but still dedupes on the plan's cited `Source:` URLs, so
+   the date bump is an optimisation, not correctness. It rides along in the next
+   PR that has real content.
+2. Otherwise triage, update the plan **including `Last swept:`**, and open a
+   **plan-only PR** — no code changes.
 3. Title: `docs(cloudflare): sweep <since>→<today>, N new items`. Body: the
    forced-move callout verbatim, plus the new item IDs.
 4. Exit 3 means the repo has no Cloudflare surface. That is a **clean no-op**, not

@@ -712,7 +712,11 @@ const commands = {
     }
     if (nothing) {
       out('**Nothing new.** No unseen changelog entries on this surface and no dependency drift.');
-      out(`Bump \`**Last swept:** ${today()}\` in ${st.path} and stop.`);
+      out('');
+      out('Commit nothing and open no PR. A date-only bump of `Last swept:` is not worth');
+      out('a PR at a fast cadence — dedupe runs off the cited `Source:` URLs, so a stale');
+      out(`date only widens the scan window. Let the bump to ${today()} ride along in the`);
+      out('next sweep that actually finds something.');
       return;
     }
     renderDeps(d);

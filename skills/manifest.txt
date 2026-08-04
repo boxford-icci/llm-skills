@@ -4,6 +4,8 @@ api-review
 apple-ship
 aws-ship
 azure-ship
+cloudflare-release-adopt
+cloudflare-release-plan
 cloudflare-ship
 dep-audit
 execute

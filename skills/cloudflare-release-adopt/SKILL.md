@@ -119,6 +119,25 @@ report it `done`.
 
 - **The plan's `Evidence:` line rots.** Line numbers shift; files move. Re-grep by
   symbol name, not by line number.
+- **Never audit "every use of X" by grepping a call shape you guessed.** This has
+  produced three wrong conclusions in real use: `withCircuitBreaker(` found
+  nothing when the real expression was `state.upstreamBreakers.durable.execute`,
+  and a later grep for `upstreamBreakers.durable` still missed half the sites
+  because the same object was *injected under a different name* (`durableBreaker`)
+  into two collaborators' constructors. Work from the **definition** outward:
+  find where the thing is constructed, grep every identifier it is passed or
+  assigned as, and follow each one. Then state the inventory with a count, so an
+  omission is visible. A grep that returns nothing is evidence about your guess,
+  not about the code.
+- **Classify what a guard *does on failure*, not what it is called.** A
+  "circuit breaker" whose catch block rethrows, or whose collaborator refuses the
+  write, is a fail-closed security control — removing it is a security change,
+  whatever the class name says. Read the catch block of every site before
+  concluding a wrapper is redundant.
+- **A zero counter is not proof a path is dead.** Check whether the metric is
+  shared by several call sites (it cannot then attribute a failure), and whether
+  the catch rethrows before incrementing (the counter then stays zero precisely
+  when the guard is working). Both were true in a real audit here.
 - **A "current" dependency can still be the wrong package.** If the plan's item is
   about a successor package under a new name, the old one bumping cleanly is
   irrelevant — check for the successor, not the version.

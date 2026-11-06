@@ -405,8 +405,11 @@ function validateItems(items) {
     // defined scope, and one with no Verify has no definition of done. One
     // shipped without them before this check existed.
     if (i.bucket !== 4 && !['rejected', 'done'].includes(i.status)) {
-      if (!/^\*\*Steps\*\*\s*$/m.test(i.body ?? '')) problems.push(`${i.id}: no **Steps** section (required for buckets 1-3)`);
-      if (!/^\*\*Verify\*\*\s*$/m.test(i.body ?? '')) problems.push(`${i.id}: no **Verify** section (required for buckets 1-3)`);
+      // Prefix match, not exact: a heading like `**Verify after the release**`
+      // carries more information than a bare `**Verify**` and should not be
+      // flattened by the linter.
+      if (!/^\*\*Steps\b.*\*\*\s*$/m.test(i.body ?? '')) problems.push(`${i.id}: no **Steps** section (required for buckets 1-3)`);
+      if (!/^\*\*Verify\b.*\*\*\s*$/m.test(i.body ?? '')) problems.push(`${i.id}: no **Verify** section (required for buckets 1-3)`);
     }
   }
   return problems;

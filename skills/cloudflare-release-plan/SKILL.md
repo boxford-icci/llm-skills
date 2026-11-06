@@ -109,6 +109,9 @@ flag style.
 - **Never reuse an ID**, even for rejected items — PRs and commits cite them.
 - **Every item needs a `Source:` URL.** `new` dedupes on those URLs; an item
   without one is re-reported every sweep, forever.
+- **A prerequisite goes in `Blocked-by:`, never only in prose.** Ranking does not
+  read Steps, so "do not start until CF-00X is done" written as a sentence will
+  still be handed to the adopter as the next thing to do.
 - **Verify every URL you cite.** `curl -sS -o /dev/null -w '%{http_code}' -L <url>`.
   Slugs are not guessable from titles — guessing produces 404s in a committed doc.
 - **Cite `file:line` for every claim about the repo.** "We hand-roll this" without

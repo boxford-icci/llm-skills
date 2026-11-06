@@ -63,6 +63,7 @@ deleted, with the concrete file that proves it.
 | `Stage` | `GA`, `public beta`, `open beta`, `private beta`, `preview`, `experimental`, `research preview`, `BREAKING`, `DEPRECATION`, `BILLING`, `n/a` |
 | `Status` | `todo`, `in-progress`, `blocked`, `done`, `rejected` |
 | `Deadline` | `YYYY-MM-DD` or `—` |
+| `Blocked-by` | One or more `CF-###`, comma separated. Optional; omit the line entirely when nothing blocks the item. |
 | `Evidence` | Repo-relative paths, `file.ts:12` form welcome. `—` if none. |
 | `Source` | One or more Cloudflare URLs. **`driver.mjs new` dedupes against these**, so an item with no source URL will be re-reported every sweep. |
 
@@ -110,6 +111,14 @@ node <skill-dir>/driver.mjs plan --next --json
 
 Priority order is: overdue `Deadline` first, then bucket 1 → 2 → 3, then ID.
 Bucket 4 is never returned — those items are decisions to *not* act.
+
+**`Blocked-by` is enforced, and prose is not.** An item whose blockers are not
+all `done` or `rejected` is excluded from `plan --todo` and `plan --next`, and
+listed separately as held back. Writing "do not start until CF-005 is done" in
+the Steps does nothing — ranking never reads the prose, so the adopter was once
+handed an item whose prerequisite was still in progress. If an item has a
+prerequisite, it needs the field. `--validate` rejects a `Blocked-by` that names
+a nonexistent item or the item itself.
 
 Exit `5` means no plan file exists yet. Exit `6` means the plan violates this
 schema.

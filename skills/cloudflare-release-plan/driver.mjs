@@ -343,7 +343,7 @@ function readItems() {
     const head = line.match(/^###\s+(CF-\d+)\s*[·|-]\s*(.+?)\s*$/);
     if (head) {
       if (cur) items.push(cur);
-      cur = { id: head[1], title: head[2], bucket: null, stage: null, status: null, deadline: null, sources: [], body: '' };
+      cur = { id: head[1], title: head[2], bucket: null, stage: null, status: null, deadline: null, sources: [], blockedBy: [], body: '' };
       continue;
     }
     if (!cur) continue;
@@ -358,10 +358,23 @@ function readItems() {
     if (d !== null) cur.deadline = /^\d{4}-\d{2}-\d{2}$/.test(d) ? d : null;
     const src = field(line, 'Source');
     if (src !== null) cur.sources.push(src);
+    const bb = field(line, 'Blocked-by');
+    if (bb !== null) cur.blockedBy = [...(bb.match(/CF-\d+/g) ?? [])];
   }
   if (cur) items.push(cur);
   const now = today();
-  for (const i of items) i.overdue = Boolean(i.deadline && i.deadline < now && i.status === 'todo');
+  const byId = new Map(items.map((i) => [i.id, i]));
+  for (const i of items) {
+    i.overdue = Boolean(i.deadline && i.deadline < now && i.status === 'todo');
+    // A blocker clears only when it is done or rejected. todo, in-progress,
+    // blocked, or an id that does not exist all still block — a prose
+    // "do not start until X" is invisible to ranking, which is how the adopter
+    // was handed an item whose prerequisite was still in progress.
+    i.blockers = i.blockedBy.filter((id) => {
+      const b = byId.get(id);
+      return !b || !['done', 'rejected'].includes(b.status);
+    });
+  }
   return { path, exists: true, items };
 }
 
@@ -371,7 +384,7 @@ const strip = (i) => (i ? (({ body, ...rest }) => rest)(i) : i);
 
 function rankTodo(items) {
   return items
-    .filter((i) => i.status === 'todo' && i.bucket !== 4)
+    .filter((i) => i.status === 'todo' && i.bucket !== 4 && i.blockers.length === 0)
     .sort(
       (a, b) =>
         Number(b.overdue) - Number(a.overdue) ||
@@ -396,6 +409,10 @@ function validateItems(items) {
       problems.push(`${i.id}: Status "${i.status ?? '(missing)'}" is not one of ${VALID_STATUS.join(' | ')}`);
     if (!VALID_BUCKET.includes(i.bucket))
       problems.push(`${i.id}: Bucket "${i.bucket ?? '(missing)'}" is not 1-4`);
+    for (const id of i.blockedBy) {
+      if (id === i.id) problems.push(`${i.id}: Blocked-by lists itself`);
+      else if (!items.some((x) => x.id === id)) problems.push(`${i.id}: Blocked-by references ${id}, which does not exist`);
+    }
     if (!i.sources.length)
       problems.push(`${i.id}: no Source: URL — dedupe runs off those, so this item is re-reported every sweep`);
     if (i.bucket !== 4 && i.status !== 'rejected' && !i.stage)
@@ -707,8 +724,11 @@ const commands = {
     const next = ranked[0] ?? null;
     if (flag('next') === true) {
       if (!next) {
-        if (AS_JSON) return out(JSON.stringify({ path, next: null }, null, 2));
-        return out('No actionable `todo` items. Nothing to adopt.');
+        const held = items.filter((i) => i.status === 'todo' && i.bucket !== 4 && i.blockers.length);
+        if (AS_JSON) return out(JSON.stringify({ path, next: null, blocked: held.map(strip) }, null, 2));
+        out('No actionable `todo` items. Nothing to adopt.');
+        for (const i of held) out(`  held: ${i.id} needs ${i.blockers.join(', ')}`);
+        return;
       }
       if (AS_JSON) return out(JSON.stringify({ path, next: strip(next) }, null, 2));
       out(`${next.id} · ${next.title}`);
@@ -716,6 +736,7 @@ const commands = {
       for (const s of next.sources) out(`  ${s}`);
       return;
     }
+    const blocked = items.filter((i) => i.status === 'todo' && i.bucket !== 4 && i.blockers.length);
     const shown = flag('todo') === true ? ranked : items;
     if (AS_JSON) return out(JSON.stringify({ path, count: shown.length, next: next?.id ?? null, items: shown.map(strip) }, null, 2));
     out(`## ${path} — ${shown.length} item(s)`);
@@ -728,11 +749,15 @@ const commands = {
     out('| --- | --- | --- | --- | --- | --- |');
     for (const i of shown) {
       out(
-        `| ${i.id} | ${i.bucket ?? '?'} | ${i.stage ?? '?'} | ${i.status ?? '?'}${i.overdue ? ' **OVERDUE**' : ''} | ${i.deadline ?? '—'} | ${i.title} |`
+        `| ${i.id} | ${i.bucket ?? '?'} | ${i.stage ?? '?'} | ${i.status ?? '?'}${i.overdue ? ' **OVERDUE**' : ''}${i.blockers?.length ? ` _(blocked by ${i.blockers.join(', ')})_` : ''} | ${i.deadline ?? '—'} | ${i.title} |`
       );
     }
     out('');
     out(next ? `**Next:** ${next.id} — ${next.title}` : '_No actionable todo items._');
+    if (blocked.length) {
+      out('');
+      out(`**Held back by prerequisites:** ${blocked.map((i) => `${i.id} (needs ${i.blockers.join(', ')})`).join('; ')}`);
+    }
   },
 
   releases: async () => {

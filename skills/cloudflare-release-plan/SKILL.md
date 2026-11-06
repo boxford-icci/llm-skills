@@ -29,11 +29,15 @@ globally or vendored into the repo:
 D=$(ls -d ~/.claude/skills/cloudflare-release-plan/driver.mjs .claude/skills/cloudflare-release-plan/driver.mjs 2>/dev/null | head -1); echo "$D"
 ```
 
-**Step 1 — what does this repo actually use, and when did we last look?**
+**Step 1 — what does this repo actually use, when did we last look, and is the plan still well-formed?**
 
 ```bash
-node "$D" surface && node "$D" state
+node "$D" surface && node "$D" state && node "$D" plan --validate
 ```
+
+If `--validate` exits 6, fix the schema before sweeping. A hand-edited `Status:`
+that is not one of the five allowed values parses silently and drops the item out
+of `plan --todo`, so the adopter stops seeing it. That has happened in the wild.
 
 **Step 2 — what's new since then.** This is the command to use by default. It
 auto-derives `--since` from the plan's `Last swept:` line and drops anything the
@@ -58,11 +62,12 @@ Other commands, for when `new` isn't the right question:
 | `node "$D" deps` | Dependency drift only. Cheap; safe to run weekly. |
 | `node "$D" blog --since=2026-07-20` | Big launches appear on the blog days before the changelog. |
 | `node "$D" plan` / `plan --todo` / `plan --next` | Read back what's already in the plan. `cloudflare-release-adopt` uses this. |
+| `node "$D" plan --validate` | Check the plan still matches the schema. Exit 6 if not. **Run this first on every sweep** — the plan is hand-edited between runs. |
 | `node "$D" vendor` | Copy this skill pair into the repo's `.claude/skills/` for environments with no `~/.claude`. |
 
 Flags: `--since=` `--until=` `--all` `--products=A,B` `--limit=N` `--json` `--plan=PATH`.
 Dates require `=`. Exit codes: `2` bad usage, `3` not a Cloudflare repo,
-`4` network/feed failure, `5` no plan file.
+`4` network/feed failure, `5` no plan file, `6` plan fails schema validation.
 
 ## Triage rubric
 

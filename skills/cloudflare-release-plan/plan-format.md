@@ -101,6 +101,7 @@ Use the driver — do not hand-roll grep or awk against this file. (The obvious
 and fails on macOS BSD awk with `calling undefined function strftime`.)
 
 ```bash
+node <skill-dir>/driver.mjs plan --validate # schema check; exit 6 on failure
 node <skill-dir>/driver.mjs plan            # every item as a table
 node <skill-dir>/driver.mjs plan --todo     # actionable only, priority-ordered
 node <skill-dir>/driver.mjs plan --next     # the single next item
@@ -110,7 +111,15 @@ node <skill-dir>/driver.mjs plan --next --json
 Priority order is: overdue `Deadline` first, then bucket 1 → 2 → 3, then ID.
 Bucket 4 is never returned — those items are decisions to *not* act.
 
-Exit `5` means no plan file exists yet.
+Exit `5` means no plan file exists yet. Exit `6` means the plan violates this
+schema.
+
+**The field values above are enforced, not advisory.** `--validate` rejects a
+`Status:` or `Bucket:` outside the allowed set, a duplicate ID, and an item with
+no `Source:` URL. This matters because the file is hand-edited between sweeps: a
+`Status:` written as prose still parses, but the item silently disappears from
+`plan --todo` and the adopter stops seeing it. A plain `plan` read prints a
+warning banner when any problem is present.
 
 Note `plan` only sees `###` item blocks, so its count excludes the bucket-4
 table rows. That is intentional — the blocks are the actionable surface.

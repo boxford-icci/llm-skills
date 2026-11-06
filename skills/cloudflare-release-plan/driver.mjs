@@ -377,6 +377,30 @@ function rankTodo(items) {
     );
 }
 
+const VALID_STATUS = ['todo', 'in-progress', 'blocked', 'done', 'rejected'];
+const VALID_BUCKET = [1, 2, 3, 4];
+
+// A hand-edited plan is the normal case, and a free-prose `Status:` parses
+// without complaint while silently dropping the item out of `plan --todo`.
+// That already happened once in the wild, so the shape is checked, not trusted.
+function validateItems(items) {
+  const problems = [];
+  const seen = new Map();
+  for (const i of items) {
+    if (seen.has(i.id)) problems.push(`${i.id}: duplicate ID (IDs are never reused)`);
+    seen.set(i.id, true);
+    if (!VALID_STATUS.includes(i.status))
+      problems.push(`${i.id}: Status "${i.status ?? '(missing)'}" is not one of ${VALID_STATUS.join(' | ')}`);
+    if (!VALID_BUCKET.includes(i.bucket))
+      problems.push(`${i.id}: Bucket "${i.bucket ?? '(missing)'}" is not 1-4`);
+    if (!i.sources.length)
+      problems.push(`${i.id}: no Source: URL — dedupe runs off those, so this item is re-reported every sweep`);
+    if (i.bucket !== 4 && i.status !== 'rejected' && !i.stage)
+      problems.push(`${i.id}: no Stage:`);
+  }
+  return problems;
+}
+
 function readState() {
   const path = findPlan();
   if (!path) return { path: PLAN_PATH, exists: false, lastSwept: null, knownLinks: [] };
@@ -656,6 +680,15 @@ const commands = {
   plan: async () => {
     const { path, exists, items } = readItems();
     if (!exists) die(`no plan file found (looked for ${PLAN_PATH}). Run the cloudflare-release-plan skill first.`, 5);
+    const problems = validateItems(items);
+    if (flag('validate') === true) {
+      if (AS_JSON) return out(JSON.stringify({ path, ok: problems.length === 0, problems }, null, 2));
+      if (!problems.length) return out(`${path}: ${items.length} item(s), schema OK.`);
+      out(`${path}: ${problems.length} schema problem(s)`);
+      for (const p of problems) out(`  - ${p}`);
+      process.exitCode = 6;
+      return;
+    }
     const ranked = rankTodo(items);
     const next = ranked[0] ?? null;
     if (flag('next') === true) {
@@ -673,6 +706,10 @@ const commands = {
     if (AS_JSON) return out(JSON.stringify({ path, count: shown.length, next: next?.id ?? null, items: shown }, null, 2));
     out(`## ${path} — ${shown.length} item(s)`);
     out('');
+    if (problems.length) {
+      out(`> **${problems.length} schema problem(s)** — run \`plan --validate\` for detail.`);
+      out('');
+    }
     out('| ID | b | stage | status | deadline | title |');
     out('| --- | --- | --- | --- | --- | --- |');
     for (const i of shown) {

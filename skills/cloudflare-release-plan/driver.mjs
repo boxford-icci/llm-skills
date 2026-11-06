@@ -343,10 +343,11 @@ function readItems() {
     const head = line.match(/^###\s+(CF-\d+)\s*[·|-]\s*(.+?)\s*$/);
     if (head) {
       if (cur) items.push(cur);
-      cur = { id: head[1], title: head[2], bucket: null, stage: null, status: null, deadline: null, sources: [] };
+      cur = { id: head[1], title: head[2], bucket: null, stage: null, status: null, deadline: null, sources: [], body: '' };
       continue;
     }
     if (!cur) continue;
+    cur.body = (cur.body ?? '') + line + '\n';
     const b = field(line, 'Bucket');
     if (b !== null) cur.bucket = parseInt(b, 10) || null;
     const st = field(line, 'Stage');
@@ -366,6 +367,8 @@ function readItems() {
 
 // Priority: overdue deadlines first, then bucket order, then ID order.
 // Bucket 4 is never actionable — those items are decisions to NOT act.
+const strip = (i) => (i ? (({ body, ...rest }) => rest)(i) : i);
+
 function rankTodo(items) {
   return items
     .filter((i) => i.status === 'todo' && i.bucket !== 4)
@@ -397,6 +400,14 @@ function validateItems(items) {
       problems.push(`${i.id}: no Source: URL — dedupe runs off those, so this item is re-reported every sweep`);
     if (i.bucket !== 4 && i.status !== 'rejected' && !i.stage)
       problems.push(`${i.id}: no Stage:`);
+    // plan-format.md requires these on buckets 1-3. The adopter consumes this
+    // file as its implementation plan: an actionable item with no Steps has no
+    // defined scope, and one with no Verify has no definition of done. One
+    // shipped without them before this check existed.
+    if (i.bucket !== 4 && !['rejected', 'done'].includes(i.status)) {
+      if (!/^\*\*Steps\*\*\s*$/m.test(i.body ?? '')) problems.push(`${i.id}: no **Steps** section (required for buckets 1-3)`);
+      if (!/^\*\*Verify\*\*\s*$/m.test(i.body ?? '')) problems.push(`${i.id}: no **Verify** section (required for buckets 1-3)`);
+    }
   }
   return problems;
 }
@@ -696,14 +707,14 @@ const commands = {
         if (AS_JSON) return out(JSON.stringify({ path, next: null }, null, 2));
         return out('No actionable `todo` items. Nothing to adopt.');
       }
-      if (AS_JSON) return out(JSON.stringify({ path, next }, null, 2));
+      if (AS_JSON) return out(JSON.stringify({ path, next: strip(next) }, null, 2));
       out(`${next.id} · ${next.title}`);
       out(`  bucket ${next.bucket} · stage ${next.stage} · deadline ${next.deadline ?? '—'}${next.overdue ? ' · OVERDUE' : ''}`);
       for (const s of next.sources) out(`  ${s}`);
       return;
     }
     const shown = flag('todo') === true ? ranked : items;
-    if (AS_JSON) return out(JSON.stringify({ path, count: shown.length, next: next?.id ?? null, items: shown }, null, 2));
+    if (AS_JSON) return out(JSON.stringify({ path, count: shown.length, next: next?.id ?? null, items: shown.map(strip) }, null, 2));
     out(`## ${path} — ${shown.length} item(s)`);
     out('');
     if (problems.length) {

@@ -434,9 +434,14 @@ function validateItems(items) {
 
 function readState() {
   const path = findPlan();
-  if (!path) return { path: PLAN_PATH, exists: false, lastSwept: null, knownLinks: [] };
+  if (!path) return { path: PLAN_PATH, exists: false, lastSwept: null, backfill: null, knownLinks: [] };
   const text = readFileSync(path, 'utf8');
   const swept = text.match(/^-?\s*\*\*Last swept:\*\*\s*(\d{4}-\d{2}-\d{2})/m);
+  // `Last swept` alone silently drops entries that were counted but never read:
+  // the next sweep starts after them, and dedupe keys on cited Source URLs, which
+  // an unread entry does not have. A pending backfill range keeps that window in
+  // scope until someone clears it.
+  const bf = text.match(/^-?\s*\*\*Backfill pending:\*\*\s*(\d{4}-\d{2}-\d{2})\s*(?:→|->|–|—)\s*(\d{4}-\d{2}-\d{2})/m);
   const links = [
     ...new Set(
       [...text.matchAll(/https:\/\/(?:developers|blog)\.cloudflare\.com\/[^\s>)\]]+/g)].map((m) =>
@@ -444,7 +449,13 @@ function readState() {
       )
     ),
   ];
-  return { path, exists: true, lastSwept: swept?.[1] ?? null, knownLinks: links };
+  return {
+    path,
+    exists: true,
+    lastSwept: swept?.[1] ?? null,
+    backfill: bf ? { from: bf[1], to: bf[2] } : null,
+    knownLinks: links,
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -702,6 +713,7 @@ const commands = {
     out('');
     out(`Plan file:     ${st.path}${st.exists ? '' : '  (does not exist yet)'}`);
     out(`Last swept:    ${st.lastSwept ?? 'never'}`);
+    out(`Backfill:      ${st.backfill ? `${st.backfill.from} → ${st.backfill.to} (PENDING)` : 'none'}`);
     out(`Cited links:   ${st.knownLinks.length}`);
     out(`Suggested --since: ${payload.suggestedSince}`);
     out(`Today:         ${payload.today}`);
@@ -769,7 +781,9 @@ const commands = {
   // minus anything the plan already cites. Exit 0 with no items = nothing to do.
   new: async () => {
     const st = readState();
-    const since = dateFlag('since', st.lastSwept ?? daysAgo(30));
+    // A pending backfill range stays in scope: scan from the earlier of the two.
+    const frontier = st.lastSwept ?? daysAgo(30);
+    const since = dateFlag('since', st.backfill && st.backfill.from < frontier ? st.backfill.from : frontier);
     const r = await changelog({ since, excludeKnown: true });
     const b = await blogSince(since);
     const d = await deps();
@@ -777,6 +791,14 @@ const commands = {
     if (AS_JSON) return out(JSON.stringify({ state: { path: st.path, lastSwept: st.lastSwept }, nothing, changelog: r, blog: b, deps: d }, null, 2));
     out(`# New since ${since}${st.lastSwept ? ' (plan\'s last sweep)' : ' (no prior sweep recorded)'}`);
     out('');
+    if (st.backfill) {
+      out(`> **Backfill pending: ${st.backfill.from} → ${st.backfill.to}.** Entries in that window were`);
+      out('> counted but never read, so this sweep re-scans from there rather than from');
+      out('> `Last swept`. **Do not clear the `Backfill pending:` line until those entries are');
+      out('> actually triaged** — removing it drops them permanently, because dedupe keys on');
+      out('> cited `Source:` URLs and an unread entry has none.');
+      out('');
+    }
     if (b.innovationWeek) {
       const w = b.innovationWeek;
       out(`> **INNOVATION WEEK IN PROGRESS** — day ${w.dayOfWeek}, opened ${w.started}.`);

@@ -106,6 +106,12 @@ flag style.
 
 - **Bump `Last swept:` on every run**, including no-op runs. The next routine
   derives its window from it.
+- **If you did not read every entry in the window, add `Backfill pending: <from> → <to>`
+  to the header.** Advancing `Last swept:` past unread entries drops them
+  permanently — they fall outside the next window and dedupe cannot catch them,
+  because it keys on cited `Source:` URLs that an unread entry does not have. Say
+  in "What this sweep did not check" how many were counted but not read, and leave
+  the backfill line until they are triaged.
 - **Never reuse an ID**, even for rejected items — PRs and commits cite them.
 - **Every item needs a `Source:` URL.** `new` dedupes on those URLs; an item
   without one is re-reported every sweep, forever.

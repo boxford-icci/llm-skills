@@ -15,6 +15,7 @@ separate state store.
 # Cloudflare adoption plan
 
 - **Last swept:** 2026-08-04
+- **Backfill pending:** 2026-05-01 → 2026-08-04
 - **Surface:** D1, Durable Objects, Queues, R2, Workers, Workers KV, Workflows, Wrangler
 - **Next ID:** CF-018
 ```
@@ -22,6 +23,13 @@ separate state store.
 - `Last swept` — `driver.mjs state` regexes this to derive `--since`. **The
   planner must bump it on every run, including runs that found nothing.** Forget
   it and the next routine re-sweeps the same window forever.
+- `Backfill pending` — **optional, and the only safe way to record a partial
+  sweep.** `Last swept` alone silently loses entries that were counted but never
+  read: the next sweep starts after them, and dedupe keys on cited `Source:` URLs,
+  which an unread entry has none of. With this line present, `new` scans from the
+  range's start instead of from `Last swept`. **Omit the line when nothing is
+  outstanding, and never delete it to make a sweep look clean** — deleting it
+  discards those entries for good.
 - `Surface` — paste from `driver.mjs surface`. Drift here is the signal a new
   binding was added and the plan's filter is stale.
 - `Next ID` — monotonic counter. **IDs are never reused, even for rejected
